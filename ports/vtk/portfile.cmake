@@ -1,9 +1,8 @@
 set(VTK_SHORT_VERSION 9.2)
-if(NOT VCPKG_TARGET_IS_WINDOWS)
-    message(WARNING "You will need to install Xorg dependencies to build vtk:\napt-get install libxt-dev\n")
-endif()
 
 set(VCPKG_POLICY_SKIP_ABSOLUTE_PATHS_CHECK enabled)
+
+#https://kitware.github.io/paraview-docs/latest/cxx/Offscreen.html
 
 vcpkg_download_distfile(
     STRING_PATCH
@@ -38,6 +37,7 @@ vcpkg_from_github(
         vtkioss.patch
         jsoncpp.patch
         iotr.patch
+        fix-all-feature.patch
         ${STRING_PATCH}
 )
 
@@ -73,6 +73,7 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS VTK_FEATURE_OPTIONS
         "qt"          VTK_MODULE_ENABLE_VTK_GUISupportQtSQL
         "qt"          VTK_MODULE_ENABLE_VTK_RenderingQt
         "qt"          VTK_MODULE_ENABLE_VTK_ViewsQt
+        "qt-quick"    VTK_MODULE_ENABLE_VTK_GUISupportQtQuick
         "atlmfc"      VTK_MODULE_ENABLE_VTK_GUISupportMFC
         "vtkm"        VTK_MODULE_ENABLE_VTK_AcceleratorsVTKmCore
         "vtkm"        VTK_MODULE_ENABLE_VTK_AcceleratorsVTKmDataModel
@@ -109,9 +110,6 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS VTK_FEATURE_OPTIONS
 list(TRANSFORM VTK_FEATURE_OPTIONS REPLACE "=ON" "=YES")
 list(TRANSFORM VTK_FEATURE_OPTIONS REPLACE "=OFF" "=DONT_WANT")
 
-if("qt" IN_LIST FEATURES AND NOT EXISTS "${CURRENT_HOST_INSTALLED_DIR}/tools/Qt5/bin/qmlplugindump${VCPKG_HOST_EXECUTABLE_SUFFIX}")
-    list(APPEND VTK_FEATURE_OPTIONS -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick=NO)
-endif()
 if("qt" IN_LIST FEATURES)
     file(READ "${CURRENT_INSTALLED_DIR}/share/qtbase/vcpkg_abi_info.txt" qtbase_abi_info)
     if(qtbase_abi_info MATCHES "(^|;)gles2(;|$)")
@@ -196,7 +194,11 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
 # =============================================================================
 # Configure & Install
 
-
+if(VCPKG_TARGET_IS_WINDOWS)
+  list(APPEND FEATURE_OPTIONS "-DVTK_USE_MICROSOFT_MEDIA_FOUNDATION=ON"
+                              "-DVTK_USE_VIDEO_FOR_WINDOWS=ON"
+                              "-DVTK_USE_VIDEO_FOR_WINDOWS_CAPTURE=ON")
+endif()
 
 # We set all libraries to "system" and explicitly list the ones that should use embedded copies
 vcpkg_cmake_configure(
@@ -330,12 +332,11 @@ if("paraview" IN_LIST FEATURES)
 
 endif()
 
-if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
-    if(EXISTS "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/CMakeFiles/vtkpythonmodules/static_python") #python headers
-        file(GLOB_RECURSE STATIC_PYTHON_FILES "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/CMakeFiles/*/static_python/*.h")
-        file(INSTALL ${STATIC_PYTHON_FILES} DESTINATION "${CURRENT_PACKAGES_DIR}/include/vtk-${VTK_SHORT_VERSION}")
-    endif()
-endif()
+  if(EXISTS "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/CMakeFiles/vtkpythonmodules/static_python") #python headers
+      file(GLOB_RECURSE STATIC_PYTHON_FILES "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/CMakeFiles/*/static_python/*.h")
+      file(INSTALL ${STATIC_PYTHON_FILES} DESTINATION "${CURRENT_PACKAGES_DIR}/include/vtk-${VTK_SHORT_VERSION}")
+  endif()
+
 
 #remove one get_filename_component(_vtk_module_import_prefix "${_vtk_module_import_prefix}" DIRECTORY) from vtk-prefix.cmake and VTK-vtk-module-properties and vtk-python.cmake
 set(filenames_fix_prefix vtk-prefix VTK-vtk-module-properties vtk-python)
