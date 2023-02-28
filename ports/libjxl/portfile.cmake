@@ -24,14 +24,17 @@ if(VCPKG_TARGET_IS_UWP)
     string(APPEND VCPKG_CXX_FLAGS " /wd4146")
 endif()
 
+vcpkg_find_acquire_program(PKGCONFIG)
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
-        "-DJPEGXL_VERSION=${JPEGXL_VERSION}"
+        "-DJPEGXL_VERSION=${VERSION}"
         -DJPEGXL_FORCE_SYSTEM_BROTLI=ON
         -DJPEGXL_FORCE_SYSTEM_HWY=ON
         -DJPEGXL_FORCE_SYSTEM_LCMS2=ON
         ${FEATURE_OPTIONS}
+        -DJPEGXL_BUNDLE_LIBPNG=OFF
         -DJPEGXL_ENABLE_BENCHMARK=OFF
         -DJPEGXL_ENABLE_DOXYGEN=OFF
         -DJPEGXL_ENABLE_EXAMPLES=OFF
@@ -45,6 +48,7 @@ vcpkg_cmake_configure(
         -DJPEGXL_ENABLE_TCMALLOC=OFF
         -DBUILD_TESTING=OFF
         -DCMAKE_FIND_PACKAGE_TARGETS_GLOBAL=ON
+        -DPKG_CONFIG_EXECUTABLE=${PKGCONFIG} # for highway cflags
     MAYBE_UNUSED_VARIABLES
         CMAKE_DISABLE_FIND_PACKAGE_GIF
         CMAKE_DISABLE_FIND_PACKAGE_JPEG
@@ -52,7 +56,7 @@ vcpkg_cmake_configure(
         CMAKE_DISABLE_FIND_PACKAGE_ZLIB
 )
 
-vcpkg_cmake_install()
+vcpkg_cmake_install(DISABLE_PARALLEL)
 vcpkg_copy_pdbs()
 vcpkg_fixup_pkgconfig()
 
@@ -63,3 +67,6 @@ endif()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 
 vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
+file(INSTALL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/.ninja_log" DESTINATION "${CURRENT_BUILDTREES_DIR}" RENAME "ninja-${TARGET_TRIPLET}-rel.log")
+file(INSTALL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg/.ninja_log" DESTINATION "${CURRENT_BUILDTREES_DIR}" RENAME "ninja-${TARGET_TRIPLET}-dbg.log")
+message(FATAL_ERROR STOP)
