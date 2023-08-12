@@ -233,23 +233,64 @@ else()
         set(VCPKG_POLICY_MISMATCHED_NUMBER_OF_BINARIES enabled)
     endif()
 
+    if(NOT ENV{PKG_CONFIG})
+        vcpkg_find_acquire_program(PKGCONFIG)
+        set(ENV{PKG_CONFIG} "${PKGCONFIG}")
+    endif()
+
     set(OPTIONS
-        "--with-openssl=${CURRENT_INSTALLED_DIR}"
         "--without-ensurepip"
         "--with-suffix="
         "--with-system-expat"
         "--without-readline"
         "--disable-test-modules"
     )
-    if(VCPKG_TARGET_IS_OSX)
-        list(APPEND OPTIONS "LIBS=-liconv -lintl")
+    set(libs_release "")
+    set(libs_debug "")
+    if(EXISTS "${CURRENT_INSTALLED_DIR}/lib/libintl.a")
+        string(APPEND libs_release " ${CURRENT_INSTALLED_DIR}/lib/libintl.a")
+        if(EXISTS "${CURRENT_INSTALLED_DIR}/debug/lib/libintl.a")
+            string(APPEND libs_debug " ${CURRENT_INSTALLED_DIR}/debug/lib/libintl.a")
+        else()
+            string(APPEND libs_debug " ${CURRENT_INSTALLED_DIR}/lib/libintl.a")
+        endif()
+    endif()
+    if(EXISTS "${CURRENT_INSTALLED_DIR}/lib/libiconv.a")
+        string(APPEND libs_release " ${CURRENT_INSTALLED_DIR}/lib/libiconv.a")
+        if(EXISTS "${CURRENT_INSTALLED_DIR}/debug/lib/libiconv.a")
+            string(APPEND libs_debug " ${CURRENT_INSTALLED_DIR}/debug/lib/libiconv.a")
+        else()
+            string(APPEND libs_debug " ${CURRENT_INSTALLED_DIR}/lib/libiconv.a")
+        endif()
+    elseif(VCPKG_TARGET_IS_OSX)
+        string(APPEND libs_release " -liconv")
+        string(APPEND libs_debug " -liconv")
+    endif()
+    if(libs_release)
+        list(APPEND OPTIONS_RELEASE "LIBS=${libs_release}")
+        list(APPEND OPTIONS_DEBUG "LIBS=${libs_debug}")
     endif()
 
     # The version of the build Python must match the version of the cross compiled host Python.
     # https://docs.python.org/3/using/configure.html#cross-compiling-options
     if(VCPKG_CROSSCOMPILING)
-        set(_python_for_build "${CURRENT_HOST_INSTALLED_DIR}/tools/python3/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
-        list(APPEND OPTIONS "--with-build-python=${_python_for_build}")
+        list(APPEND OPTIONS
+            "--build=$(${SOURCE_PATH}/config.guess)"
+            "--with-build-python=${CURRENT_HOST_INSTALLED_DIR}/tools/python3/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}${VCPKG_HOST_EXECUTABLE_SUFFIX}"
+            #"PYTHON_FOR_REGEN=${CURRENT_HOST_INSTALLED_DIR}/tools/python3/python3.${PYTHON_VERSION_MINOR}${VCPKG_HOST_EXECUTABLE_SUFFIX}"
+            # Override python's AC_RUN_IFELSE cross compiling defaults.
+            # Users may override these values in VCPKG_CONFIGURE_MAKE_OPTIONS.
+            ac_cv_buggy_getaddrinfo=no
+            ac_cv_file__dev_ptc=no
+            ac_cv_file__dev_ptmx=no
+            ac_cv_pthread=yes
+            ac_osx_32bit=false
+            # Only used to determine runtime deps of readline, but the port disables readline.
+            ac_cv_prog_READELF=true # true, the program
+        )
+        if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
+            list(APPEND OPTIONS "LDFLAGS=\${LDFLAGS//-Wl,--no-undefined/}")
+        endif()
     else()
         vcpkg_find_acquire_program(PYTHON3)
         list(APPEND OPTIONS "ac_cv_prog_PYTHON_FOR_REGEN=${PYTHON3}")
@@ -263,10 +304,22 @@ else()
         OPTIONS_DEBUG
             "--with-pydebug"
             "vcpkg_rpath=${CURRENT_INSTALLED_DIR}/debug/lib"
+            ${OPTIONS_DEBUG}
         OPTIONS_RELEASE
             "vcpkg_rpath=${CURRENT_INSTALLED_DIR}/lib"
+            ${OPTIONS_RELEASE}
     )
-    vcpkg_install_make(ADD_BIN_TO_PATH INSTALL_TARGET altinstall)
+    vcpkg_install_make(
+        ADD_BIN_TO_PATH
+        INSTALL_TARGET altinstall
+        OPTIONS 
+            # The python buildsystem isn't canonical autotools:
+            # Flags are captured during configure AND injected again during build.
+            CPFLAGS=
+            CFLAGS=
+            CXXFLAGS=
+            LDFLAGS=
+    )
 
     file(COPY "${CURRENT_PACKAGES_DIR}/tools/${PORT}/bin/" DESTINATION "${CURRENT_PACKAGES_DIR}/tools/${PORT}")
 
