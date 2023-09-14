@@ -1,9 +1,40 @@
 set(VCPKG_POLICY_EMPTY_PACKAGE enabled)
 
+set(validator_args "")
+if(VCPKG_TARGET_EXECUTABLE_SUFFIX)
+    set(validator_args VALIDATOR validate_suffix)
+endif()
+function(validate_suffix validator_result_var item)
+    cmake_path(GET item EXTENSION LAST_ONLY suffix)
+    if(NOT suffix STREQUAL VCPKG_TARGET_EXECUTABLE_SUFFIX)
+        set(${validator_result_var} FALSE PARENT_SCOPE)
+    endif()
+endfunction()
+
+set(variables "")
+
+# Tool ports
+
+foreach(tool IN ITEMS bazel)
+    list(APPEND variables "vcpkg-tool-${tool}")
+    find_program("vcpkg-tool-${tool}"
+        NAMES "${tool}"
+        ${validator_args}
+        PATHS "${CURRENT_HOST_INSTALLED_DIR}/tools"
+              "${CURRENT_HOST_INSTALLED_DIR}/tools/vcpkg-tool-${tool}"
+        NO_DEFAULT_PATH
+        REQUIRED
+    )
+    if(EXISTS "${CURRENT_HOST_INSTALLED_DIR}/tools/vcpkg-tool-${tool}")
+        list(APPEND CMAKE_IGNORE_PATH "${CURRENT_HOST_INSTALLED_DIR}/tools/vcpkg-tool-${tool}")
+    endif()
+endforeach()
+list(APPEND CMAKE_IGNORE_PATH "${CURRENT_HOST_INSTALLED_DIR}/tools")
+
 # For each vcpkg_find_acquire_program(NAME).cmake script,
 # there must be a literal call to vcpkg_find_acquire_program(NAME).cmake
 
-set(variables BAZEL BISON FLEX GIT GN NINJA PERL PKGCONFIG PYTHON3 YASM)
+list(APPEND variables BAZEL BISON FLEX GIT GN NINJA PERL PKGCONFIG PYTHON3 YASM)
 vcpkg_find_acquire_program(BAZEL)
 vcpkg_find_acquire_program(BISON)
 vcpkg_find_acquire_program(FLEX)
