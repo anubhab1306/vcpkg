@@ -4782,7 +4782,7 @@
     },
     "libudns": {
       "baseline": "0.4",
-      "port-version": 5
+      "port-version": 6
     },
     "libui": {
       "baseline": "2018-11-03",
@@ -4806,7 +4806,7 @@
     },
     "liburing": {
       "baseline": "2.3",
-      "port-version": 1
+      "port-version": 2
     },
     "libusb": {
       "baseline": "1.0.26.11791",
@@ -5758,7 +5758,7 @@
     },
     "nettle": {
       "baseline": "3.8.1",
-      "port-version": 1
+      "port-version": 2
     },
     "networkdirect-sdk": {
       "baseline": "2.0.1",
