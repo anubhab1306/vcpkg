@@ -1,6 +1,6 @@
 {
   "name": "cmake-user",
-  "version-date": "2022-11-12",
+  "version-date": "2023-09-08",
   "description": "Test port to verify the vcpkg toolchain in cmake user projects",
   "license": "MIT",
   "default-features": [
@@ -166,6 +166,13 @@
           "name": "wxwidgets",
           "default-features": false,
           "platform": "!uwp"
+        },
+        {
+          "$package": "vcpkg-ci-Ice",
+          "$since": "3.9",
+          "$comment": "CMake 3.9 because the test needs full find_dependency syntax.",
+          "name": "zeroc-ice",
+          "platform": "!android & !uwp & !(windows & arm) & !wasm32"
         },
         {
           "$package": "ZLIB",
