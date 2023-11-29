@@ -2405,8 +2405,8 @@
       "port-version": 0
     },
     "eigen3": {
-      "baseline": "3.4.0",
-      "port-version": 2
+      "baseline": "3.4.1",
+      "port-version": 0
     },
     "elements": {
       "baseline": "2022-12-07",
