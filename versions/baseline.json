@@ -1609,8 +1609,8 @@
       "port-version": 0
     },
     "clamav": {
-      "baseline": "0.103.0",
-      "port-version": 4
+      "baseline": "1.0.0",
+      "port-version": 0
     },
     "clap-cleveraudio": {
       "baseline": "1.1.10",
@@ -8922,6 +8922,10 @@
     },
     "vcpkg-qmake": {
       "baseline": "2023-03-22",
+      "port-version": 0
+    },
+    "vcpkg-rust": {
+      "baseline": "1.68.0",
       "port-version": 0
     },
     "vcpkg-tool-bazel": {
