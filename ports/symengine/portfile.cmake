@@ -4,6 +4,8 @@ vcpkg_from_github(
     REF "v${VERSION}"
     SHA512 076aac35428589c5b3524a46bd939a3a3a7da44b1c866b5f71487678b27b6e48b4da034029f1630881d7713a9252e905411a04b8016c9ec56a608b6de23365ac
     HEAD_REF master
+    PATCHES
+        fix-find-tcmalloc.patch
 )
 
 vcpkg_check_features(

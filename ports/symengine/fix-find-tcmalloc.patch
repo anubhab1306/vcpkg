@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9ac911b..52af00a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -489,7 +489,7 @@ set(WITH_TCMALLOC no
+     CACHE BOOL "Build with TCMalloc linked")
+ 
+ if (WITH_TCMALLOC)
+-    find_package(TCMALLOC REQUIRED)
++    find_package(unofficial-gperftools CONFIG REQUIRED)
+     set(LIBS ${LIBS} ${TCMALLOC_TARGETS})
+ 
+     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
