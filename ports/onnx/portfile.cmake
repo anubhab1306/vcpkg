@@ -24,6 +24,8 @@ endif()
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
         pybind11 BUILD_ONNX_PYTHON
+        disable-exception ONNX_DISABLE_EXCEPTIONS
+        disable-static-generation ONNX_DISABLE_STATIC_REGISTRATION
 )
 
 # Like protoc, python is required for codegen.
