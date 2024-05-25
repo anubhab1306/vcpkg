@@ -25,18 +25,21 @@
       "host": true
     }
   ],
+  "default-features": [
+    "exception"
+  ],
   "features": {
-    "disable-exception": {
-      "description": "Disable exception handling"
-    },
-    "disable-static-generation": {
-      "description": "Disable static registration for onnx operator schemas"
+    "exception": {
+      "description": "Enable exception handling"
     },
     "pybind11": {
       "description": "Build Python binaries",
       "dependencies": [
         "pybind11"
       ]
+    },
+    "static-registration": {
+      "description": "Enable static registration for onnx operator schemas"
     }
   }
 }
