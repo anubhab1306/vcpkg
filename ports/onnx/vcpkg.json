@@ -25,13 +25,7 @@
       "host": true
     }
   ],
-  "default-features": [
-    "exception"
-  ],
   "features": {
-    "exception": {
-      "description": "Enable exception handling"
-    },
     "pybind11": {
       "description": "Build Python binaries",
       "dependencies": [

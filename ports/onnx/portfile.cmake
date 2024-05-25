@@ -25,7 +25,6 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
         pybind11 BUILD_ONNX_PYTHON
     INVERTED_FEATURES
-        exception ONNX_DISABLE_EXCEPTIONS
         static-registration ONNX_DISABLE_STATIC_REGISTRATION
 )
 
