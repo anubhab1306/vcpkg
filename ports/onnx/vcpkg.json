@@ -25,18 +25,15 @@
       "host": true
     }
   ],
-  "default-features": [
-    "static-registration"
-  ],
   "features": {
+    "disable-static-registration": {
+      "description": "Disable static registration for onnx operator schemas"
+    },
     "pybind11": {
       "description": "Build Python binaries",
       "dependencies": [
         "pybind11"
       ]
-    },
-    "static-registration": {
-      "description": "Enable static registration for onnx operator schemas"
     }
   }
 }

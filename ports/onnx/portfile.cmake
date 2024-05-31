@@ -24,8 +24,7 @@ endif()
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
         pybind11 BUILD_ONNX_PYTHON
-    INVERTED_FEATURES
-        static-registration ONNX_DISABLE_STATIC_REGISTRATION
+        disable-static-registration ONNX_DISABLE_STATIC_REGISTRATION
 )
 
 # Like protoc, python is required for codegen.
