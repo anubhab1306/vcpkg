@@ -1,12 +1,20 @@
 {
   "name": "mesa",
   "version": "24.0.7",
-  "port-version": 1,
+  "port-version": 2,
   "description": "Mesa - The 3D Graphics Library",
   "homepage": "https://www.mesa3d.org/",
   "license": "MIT AND BSL-1.0 AND SGI-B-2.0",
   "supports": "!(windows & arm) & !staticcrt & !uwp",
   "dependencies": [
+    {
+      "name": "elfutils",
+      "platform": "!(android | ios | osx | windows)"
+    },
+    {
+      "name": "libdrm",
+      "platform": "linux"
+    },
     {
       "name": "vcpkg-get-python-packages",
       "host": true
@@ -19,32 +27,18 @@
     "zstd"
   ],
   "default-features": [
-    "default-features"
+    "gles1",
+    "gles2",
+    {
+      "name": "llvm",
+      "platform": "x64"
+    },
+    "opengl"
   ],
   "features": {
-    "default-features": {
-      "description": "Platform dependent default features",
-      "dependencies": [
-        {
-          "name": "mesa",
-          "default-features": false,
-          "features": [
-            "gles1",
-            "gles2"
-          ]
-        },
-        {
-          "name": "mesa",
-          "default-features": false,
-          "features": [
-            "llvm"
-          ],
-          "platform": "x64"
-        }
-      ]
-    },
     "egl": {
       "description": "Build support for EGL platform",
+      "supports": "!ios & !osx",
       "dependencies": [
         "egl-registry"
       ]
@@ -52,17 +46,17 @@
     "gles1": {
       "description": "Build support for OpenGL ES 1.x",
       "dependencies": [
-        "opengl"
+        "opengl-registry"
       ]
     },
     "gles2": {
       "description": "Build support for OpenGL ES 2.x and 3.x",
       "dependencies": [
-        "opengl"
+        "opengl-registry"
       ]
     },
     "llvm": {
-      "description": "Build with llvmpipe",
+      "description": "Build with LLVM",
       "dependencies": [
         {
           "name": "llvm",
@@ -92,6 +86,14 @@
           "name": "llvm",
           "default-features": false,
           "features": [
+            "target-amdgpu"
+          ],
+          "platform": "!arm"
+        },
+        {
+          "name": "llvm",
+          "default-features": false,
+          "features": [
             "target-x86"
           ],
           "platform": "x64 | x86"
@@ -101,7 +103,38 @@
     "offscreen": {
       "description": "Build with support for offscreen rendering (OSMesa)",
       "dependencies": [
-        "opengl"
+        {
+          "name": "mesa",
+          "default-features": false,
+          "features": [
+            "opengl"
+          ]
+        }
+      ]
+    },
+    "opengl": {
+      "description": "Build support for OpenGL (all versions)",
+      "dependencies": [
+        "opengl-registry"
+      ]
+    },
+    "vulkan": {
+      "description": "Build support for Vulkan",
+      "dependencies": [
+        {
+          "name": "glslang",
+          "default-features": false,
+          "features": [
+            "tools"
+          ],
+          "platform": "arm | x64 | x86"
+        }
+      ]
+    },
+    "wayland": {
+      "description": "Build support for Wayland",
+      "dependencies": [
+        "wayland-protocols"
       ]
     }
   }
