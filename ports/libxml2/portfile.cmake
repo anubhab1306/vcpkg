@@ -3,7 +3,7 @@ vcpkg_from_gitlab(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO GNOME/libxml2
     REF "v${VERSION}"
-    SHA512 21f6c0340fab0dc16bfe516493aa7ce96b26abf1719b69862829eaa682d87b7b5ece1d540b7f8c30127becd0691facc278fe1cb50cd2c87320cb6d73b077caf3
+    SHA512 88eb2197073adf9dcc4cc98e168d8edee01f802748f2a0b7ed264e5e77996633491c4b033d9f43f5768e5acb0e5f6f19119ebb574936bd30224d61997fb2ac10
     HEAD_REF master
     PATCHES
         disable-docs.patch
@@ -50,6 +50,8 @@ vcpkg_cmake_configure(
         -DLIBXML2_WITH_XINCLUDE=ON
         -DLIBXML2_WITH_XPATH=ON
         -DLIBXML2_WITH_XPTR=ON
+    MAYBE_UNUSED_VARIABLES    
+         LIBXML2_WITH_MEM_DEBUG
 )
 
 vcpkg_cmake_install()
