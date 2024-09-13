@@ -107,7 +107,6 @@ vcpkg_cmake_configure(
         -Donnxruntime_ENABLE_PYTHON=OFF
         -Donnxruntime_ENABLE_EXTERNAL_CUSTOM_OP_SCHEMAS=OFF
         -Donnxruntime_ENABLE_LAZY_TENSOR=OFF
-        -Donnxruntime_NVCC_THREADS=1 # parallel compilation
         -Donnxruntime_DISABLE_RTTI=OFF
         -Donnxruntime_DISABLE_ABSEIL=OFF
         -Donnxruntime_USE_NEURAL_SPEED=OFF
@@ -124,7 +123,6 @@ vcpkg_cmake_configure(
         onnxruntime_BUILD_WEBASSEMBLY
         onnxruntime_TENSORRT_PLACEHOLDER_BUILDER
         onnxruntime_USE_CUSTOM_DIRECTML
-        onnxruntime_NVCC_THREADS
         Python_EXECUTABLE
         ORT_GIT_COMMIT
         ORT_GIT_BRANCH
