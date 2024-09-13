@@ -1,26 +1,28 @@
 diff --git a/cmake/CMakeLists.txt b/cmake/CMakeLists.txt
-index 8edbb6a..3ea97b4 100644
+index d234a27..0af2e3b 100644
 --- a/cmake/CMakeLists.txt
 +++ b/cmake/CMakeLists.txt
-@@ -38,6 +38,7 @@ include(CheckLanguage)
- include(CMakeDependentOption)
- include(FetchContent)
- include(CheckFunctionExists)
-+include(GNUInstallDirs) # onnxruntime_providers_* require CMAKE_INSTALL_* variables
- 
- # TODO: update this once all system adapt c++20
- if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-@@ -583,7 +584,8 @@ get_filename_component(ORTTRAINING_ROOT "${ORTTRAINING_ROOT}" ABSOLUTE)
- get_filename_component(REPO_ROOT "${REPO_ROOT}" ABSOLUTE)
- set(ONNXRUNTIME_INCLUDE_DIR ${REPO_ROOT}/include/onnxruntime)
- 
--include(external/onnxruntime_external_deps.cmake)
-+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/external")
-+include(external/onnxruntime_external_deps.cmake) # see portfile.cmake
- 
- set(ORT_WARNING_FLAGS)
- if (WIN32)
-@@ -1801,20 +1802,16 @@ if (onnxruntime_ENABLE_EXTERNAL_CUSTOM_OP_SCHEMAS)
+@@ -1426,13 +1426,13 @@ endif()
+ set(ORT_BUILD_INFO "ORT Build Info: ")
+ find_package(Git)
+ if (Git_FOUND)
+-  execute_process(COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
+-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+-      OUTPUT_VARIABLE ORT_GIT_COMMIT)
++  # execute_process(COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
++  #     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
++  #     OUTPUT_VARIABLE ORT_GIT_COMMIT)
+   string(STRIP "${ORT_GIT_COMMIT}" ORT_GIT_COMMIT)
+-  execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+-      OUTPUT_VARIABLE ORT_GIT_BRANCH)
++  # execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
++  #     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
++  #     OUTPUT_VARIABLE ORT_GIT_BRANCH)
+   string(STRIP "${ORT_GIT_BRANCH}" ORT_GIT_BRANCH)
+   string(APPEND ORT_BUILD_INFO "git-branch=${ORT_GIT_BRANCH}, git-commit-id=${ORT_GIT_COMMIT}, ")
+ endif()
+@@ -1832,20 +1832,16 @@ if (onnxruntime_ENABLE_EXTERNAL_CUSTOM_OP_SCHEMAS)
    )
  endif()
  
@@ -43,35 +45,11 @@ index 8edbb6a..3ea97b4 100644
      INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
  
    write_basic_package_version_file(
-diff --git a/cmake/onnxruntime.cmake b/cmake/onnxruntime.cmake
-index e15c8a0..598a38c 100644
---- a/cmake/onnxruntime.cmake
-+++ b/cmake/onnxruntime.cmake
-@@ -308,6 +308,9 @@ if(onnxruntime_BUILD_APPLE_FRAMEWORK)
-   # If it's an onnxruntime library, extract .o files from the original cmake build path to a separate directory for
-   # each library to avoid any clashes with filenames (e.g. utils.o)
-   foreach(_LIB ${onnxruntime_INTERNAL_LIBRARIES} )
-+    if(NOT TARGET ${_LIB}) # if we didn't build from source. it may not a target
-+      continue()
-+    endif()
-     GET_TARGET_PROPERTY(_LIB_TYPE ${_LIB} TYPE)
-     if(_LIB_TYPE STREQUAL "STATIC_LIBRARY")
-       set(CUR_STATIC_LIB_OBJ_DIR ${STATIC_LIB_TEMP_DIR}/$<TARGET_LINKER_FILE_BASE_NAME:${_LIB}>)
-@@ -338,6 +341,9 @@ if(onnxruntime_BUILD_APPLE_FRAMEWORK)
- 
-   # for external libraries we create a symlink to the .a file
-   foreach(_LIB ${onnxruntime_EXTERNAL_LIBRARIES})
-+    if(NOT TARGET ${_LIB}) # if we didn't build from source. it may not a target
-+      continue()
-+    endif()
-     GET_TARGET_PROPERTY(_LIB_TYPE ${_LIB} TYPE)
-     if(_LIB_TYPE STREQUAL "STATIC_LIBRARY")
-       add_custom_command(TARGET onnxruntime POST_BUILD
 diff --git a/cmake/onnxruntime_common.cmake b/cmake/onnxruntime_common.cmake
-index 69d8f5f..374e439 100644
+index 896379d..aa9dfcf 100644
 --- a/cmake/onnxruntime_common.cmake
 +++ b/cmake/onnxruntime_common.cmake
-@@ -212,7 +212,7 @@ endif()
+@@ -218,7 +218,7 @@ endif()
  
  if (NOT onnxruntime_BUILD_SHARED_LIB)
    install(DIRECTORY ${PROJECT_SOURCE_DIR}/../include/onnxruntime/core/common  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/onnxruntime/core)
@@ -97,7 +75,7 @@ index 3ab4c19..066fb56 100644
  endif()
 -
 diff --git a/cmake/onnxruntime_framework.cmake b/cmake/onnxruntime_framework.cmake
-index c9bf2ac..7dc10ef 100644
+index b85edbf..7956519 100644
 --- a/cmake/onnxruntime_framework.cmake
 +++ b/cmake/onnxruntime_framework.cmake
 @@ -69,9 +69,9 @@ endif()
@@ -105,16 +83,16 @@ index c9bf2ac..7dc10ef 100644
  # TODO: for now, core framework depends on CUDA. It should be moved to TensorRT EP
  # TODO: provider_bridge_ort.cc should not include nccl.h
 -target_include_directories(onnxruntime_framework PRIVATE ${ONNXRUNTIME_ROOT} ${eigen_INCLUDE_DIRS} ${onnxruntime_CUDNN_HOME}/include PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
-+  target_include_directories(onnxruntime_framework PRIVATE ${ONNXRUNTIME_ROOT} ${eigen_INCLUDE_DIRS} ${onnxruntime_CUDNN_HOME}/include ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
++target_include_directories(onnxruntime_framework PRIVATE ${ONNXRUNTIME_ROOT} ${eigen_INCLUDE_DIRS} ${onnxruntime_CUDNN_HOME}/include ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
  else()
 -target_include_directories(onnxruntime_framework PRIVATE ${ONNXRUNTIME_ROOT} ${eigen_INCLUDE_DIRS} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-+  target_include_directories(onnxruntime_framework PRIVATE ${ONNXRUNTIME_ROOT} ${eigen_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
++target_include_directories(onnxruntime_framework PRIVATE ${ONNXRUNTIME_ROOT} ${eigen_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
  endif()
  # Needed for the provider interface, as it includes training headers when training is enabled
  if (onnxruntime_ENABLE_TRAINING_OPS)
-@@ -125,7 +125,7 @@ endif()
- 
- if (NOT onnxruntime_BUILD_SHARED_LIB)
+@@ -127,7 +127,7 @@ if (onnxruntime_BUILD_SHARED_LIB)
+   install(FILES ${PROJECT_SOURCE_DIR}/../include/onnxruntime/core/framework/provider_options.h  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/onnxruntime/)
+ else()
    install(DIRECTORY ${PROJECT_SOURCE_DIR}/../include/onnxruntime/core/framework  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/onnxruntime/core)
 -  install(TARGETS onnxruntime_framework
 +  install(TARGETS onnxruntime_framework EXPORT ${PROJECT_NAME}Targets
@@ -135,10 +113,10 @@ index 4d51325..fba1a68 100644
              LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
 diff --git a/cmake/onnxruntime_mlas.cmake b/cmake/onnxruntime_mlas.cmake
-index bf48d5a..392e974 100644
+index d888f80..851ff1e 100644
 --- a/cmake/onnxruntime_mlas.cmake
 +++ b/cmake/onnxruntime_mlas.cmake
-@@ -673,7 +673,7 @@ if (PLATFORM_NAME STREQUAL "macabi")
+@@ -702,7 +702,7 @@ if (PLATFORM_NAME STREQUAL "macabi")
  endif()
  
  if (NOT onnxruntime_BUILD_SHARED_LIB)
@@ -147,20 +125,11 @@ index bf48d5a..392e974 100644
              ARCHIVE   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
-@@ -696,7 +696,7 @@ block()
- endblock()
- 
- 
--if (NOT onnxruntime_ORT_MINIMAL_BUILD)
-+if (NOT onnxruntime_ORT_MINIMAL_BUILD AND (NOT CMAKE_SYSTEM_NAME MATCHES iOS)) # Xcode requires Bundle Identifier...
- 
-   #
-   # Command line tool for quantization and de-quantization of 2-D fp32 tensors
 diff --git a/cmake/onnxruntime_optimizer.cmake b/cmake/onnxruntime_optimizer.cmake
-index f15d5b8..c994fce 100644
+index 3bae1b8..8764a8a 100644
 --- a/cmake/onnxruntime_optimizer.cmake
 +++ b/cmake/onnxruntime_optimizer.cmake
-@@ -124,7 +124,7 @@ set_target_properties(onnxruntime_optimizer PROPERTIES FOLDER "ONNXRuntime")
+@@ -127,7 +127,7 @@ set_target_properties(onnxruntime_optimizer PROPERTIES FOLDER "ONNXRuntime")
  
  if (NOT onnxruntime_BUILD_SHARED_LIB)
    install(DIRECTORY ${PROJECT_SOURCE_DIR}/../include/onnxruntime/core/optimizer  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/onnxruntime/core)
@@ -170,7 +139,7 @@ index f15d5b8..c994fce 100644
              LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
 diff --git a/cmake/onnxruntime_providers_cpu.cmake b/cmake/onnxruntime_providers_cpu.cmake
-index b211c02..f97b68b 100644
+index bbcc709..81e7a2b 100644
 --- a/cmake/onnxruntime_providers_cpu.cmake
 +++ b/cmake/onnxruntime_providers_cpu.cmake
 @@ -60,7 +60,7 @@ if(NOT onnxruntime_DISABLE_CONTRIB_OPS)
@@ -182,7 +151,7 @@ index b211c02..f97b68b 100644
      "${ONNXRUNTIME_ROOT}/contrib_ops/cpu/quantization/neural_speed_wrapper.h"
      "${ONNXRUNTIME_ROOT}/contrib_ops/cpu/quantization/neural_speed_defs.h"
      "${ONNXRUNTIME_ROOT}/contrib_ops/cpu/quantization/neural_speed_gemm.cc"
-@@ -260,7 +260,7 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
+@@ -258,7 +258,7 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
    message(FATAL_ERROR "onnxruntime_providers_shared unknown platform, need to specify shared library exports for it")
    endif()
  
@@ -191,7 +160,7 @@ index b211c02..f97b68b 100644
            ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
            LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
-@@ -268,7 +268,7 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
+@@ -266,7 +266,7 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
  endif()
  
  if (NOT onnxruntime_BUILD_SHARED_LIB)
@@ -214,33 +183,7 @@ index 79bee3b..9f5c400 100644
              LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
 diff --git a/cmake/onnxruntime_util.cmake b/cmake/onnxruntime_util.cmake
-index ae7e842..94e1ea1 100644
---- a/cmake/onnxruntime_util.cmake
-+++ b/cmake/onnxruntime_util.cmake
-@@ -22,7 +22,7 @@ if (WIN32)
- endif()
- 
- if (NOT onnxruntime_BUILD_SHARED_LIB)
--    install(TARGETS onnxruntime_util
-+    install(TARGETS onnxruntime_util EXPORT ${PROJECT_NAME}Targets
-             ARCHIVE   DESTINATION ${CMAKE_INSTALL_LIBDIR}
-             LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
-             RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
-diff --git a/cmake/onnxruntime_common.cmake b/cmake/onnxruntime_common.cmake
-index 374e439..2dc5726 100644
---- a/cmake/onnxruntime_common.cmake
-+++ b/cmake/onnxruntime_common.cmake
-@@ -129,7 +129,7 @@ target_include_directories(onnxruntime_common
-         ${OPTIONAL_LITE_INCLUDE_DIR})
- 
- 
--target_link_libraries(onnxruntime_common PUBLIC safeint_interface ${GSL_TARGET} ${ABSEIL_LIBS} date::date)
-+target_link_libraries(onnxruntime_common PUBLIC ${GSL_TARGET} ${ABSEIL_LIBS} date::date)
- 
- add_dependencies(onnxruntime_common ${onnxruntime_EXTERNAL_DEPENDENCIES})
- 
-diff --git a/cmake/onnxruntime_util.cmake b/cmake/onnxruntime_util.cmake
-index 94e1ea1..7274ea8 100644
+index ae7e842..7274ea8 100644
 --- a/cmake/onnxruntime_util.cmake
 +++ b/cmake/onnxruntime_util.cmake
 @@ -9,7 +9,7 @@ file(GLOB_RECURSE onnxruntime_util_srcs CONFIGURE_DEPENDS
@@ -252,21 +195,25 @@ index 94e1ea1..7274ea8 100644
  onnxruntime_add_include_to_target(onnxruntime_util onnxruntime_common onnx onnx_proto ${PROTOBUF_LIB} Boost::mp11)
  if(UNIX)
      target_compile_options(onnxruntime_util PUBLIC "-Wno-error=comment")
+@@ -22,7 +22,7 @@ if (WIN32)
+ endif()
+ 
+ if (NOT onnxruntime_BUILD_SHARED_LIB)
+-    install(TARGETS onnxruntime_util
++    install(TARGETS onnxruntime_util EXPORT ${PROJECT_NAME}Targets
+             ARCHIVE   DESTINATION ${CMAKE_INSTALL_LIBDIR}
+             LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
+             RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
 diff --git a/cmake/CMakeLists.txt b/cmake/CMakeLists.txt
-index 9831a48..8032a3f 100644
+index ba2f19b..5f730ec 100644
 --- a/cmake/CMakeLists.txt
 +++ b/cmake/CMakeLists.txt
-@@ -1387,13 +1387,7 @@ endif()
- set(ORT_BUILD_INFO "ORT Build Info: ")
- find_package(Git)
- if (Git_FOUND)
--  execute_process(COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
--      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
--      OUTPUT_VARIABLE ORT_GIT_COMMIT)
-   string(STRIP "${ORT_GIT_COMMIT}" ORT_GIT_COMMIT)
--  execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
--      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
--      OUTPUT_VARIABLE ORT_GIT_BRANCH)
-   string(STRIP "${ORT_GIT_BRANCH}" ORT_GIT_BRANCH)
-   string(APPEND ORT_BUILD_INFO "git-branch=${ORT_GIT_BRANCH}, git-commit-id=${ORT_GIT_COMMIT}, ")
- endif()
+@@ -1017,7 +1017,7 @@ function(onnxruntime_set_compile_flags target_name)
+           endforeach()
+         endif()
+       endforeach()
+-      target_compile_definitions(${target_name} PRIVATE -DPLATFORM_WINDOWS -DNOGDI -DNOMINMAX -D_USE_MATH_DEFINES -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
++      target_compile_definitions(${target_name} PRIVATE PLATFORM_WINDOWS NOGDI NOMINMAX _USE_MATH_DEFINES _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS _SILENCE_ALL_CXX23_DEPRECATION_WARNINGS)
+       if (onnxruntime_ENABLE_MEMLEAK_CHECKER)
+         target_compile_definitions(${target_name} PRIVATE -DONNXRUNTIME_ENABLE_MEMLEAK_CHECK)
+       endif()
