@@ -53,6 +53,15 @@ diff --git a/cmake/onnxruntime_common.cmake b/cmake/onnxruntime_common.cmake
 index 69d8f5f..374e439 100644
 --- a/cmake/onnxruntime_common.cmake
 +++ b/cmake/onnxruntime_common.cmake
+@@ -129,7 +129,7 @@ target_include_directories(onnxruntime_common
+         ${OPTIONAL_LITE_INCLUDE_DIR})
+ 
+ 
+-target_link_libraries(onnxruntime_common PUBLIC safeint_interface ${GSL_TARGET} ${ABSEIL_LIBS} date::date)
++target_link_libraries(onnxruntime_common PUBLIC ${GSL_TARGET} ${ABSEIL_LIBS} date::date)
+ 
+ add_dependencies(onnxruntime_common ${onnxruntime_EXTERNAL_DEPENDENCIES})
+ 
 @@ -212,7 +212,7 @@ endif()
  
  if (NOT onnxruntime_BUILD_SHARED_LIB)
