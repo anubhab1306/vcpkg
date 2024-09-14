@@ -5166,7 +5166,7 @@
     },
     "libtorch": {
       "baseline": "2.1.2",
-      "port-version": 6
+      "port-version": 7
     },
     "libtorrent": {
       "baseline": "2.0.10",
