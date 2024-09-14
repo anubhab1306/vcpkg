@@ -3,8 +3,8 @@ string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" BUILD_SHARED)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO microsoft/onnxruntime
-    REF v1.19.0
-    SHA512 da0cd297ffc11e2f627a91e55476952b2511e36bf97fb0d9a0a8b1e2cbd12a451e1a8ead1581bfe03d08c97946f0938434edd4637cbeb28f7007533d4b37ee55
+    REF "v${VERSION}"
+    SHA512 2e1d724eda5635fc24f93966412c197c82ee933aaea4f4ce907b5f2ee7730c1e741f2ef4d50a2d54284fc7bd05bf104bd3c56fd4466525fcd70e63c07fbb2b16
     PATCHES
         fix-pr-21348.patch # cmake, source changes of PR 21348
         fix-cmake.patch
@@ -107,6 +107,7 @@ vcpkg_cmake_configure(
         -Donnxruntime_ENABLE_PYTHON=OFF
         -Donnxruntime_ENABLE_EXTERNAL_CUSTOM_OP_SCHEMAS=OFF
         -Donnxruntime_ENABLE_LAZY_TENSOR=OFF
+        -Donnxruntime_NVCC_THREADS=1
         -Donnxruntime_DISABLE_RTTI=OFF
         -Donnxruntime_DISABLE_ABSEIL=OFF
         -Donnxruntime_USE_NEURAL_SPEED=OFF
@@ -123,6 +124,7 @@ vcpkg_cmake_configure(
         onnxruntime_BUILD_WEBASSEMBLY
         onnxruntime_TENSORRT_PLACEHOLDER_BUILDER
         onnxruntime_USE_CUSTOM_DIRECTML
+        onnxruntime_NVCC_THREADS
         Python_EXECUTABLE
         ORT_GIT_COMMIT
         ORT_GIT_BRANCH

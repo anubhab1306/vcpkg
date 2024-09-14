@@ -1,8 +1,8 @@
 diff --git a/cmake/CMakeLists.txt b/cmake/CMakeLists.txt
-index d234a27..0af2e3b 100644
+index 6286e59..3fa055f 100644
 --- a/cmake/CMakeLists.txt
 +++ b/cmake/CMakeLists.txt
-@@ -1426,13 +1426,13 @@ endif()
+@@ -1385,13 +1385,13 @@ endif()
  set(ORT_BUILD_INFO "ORT Build Info: ")
  find_package(Git)
  if (Git_FOUND)
@@ -22,7 +22,7 @@ index d234a27..0af2e3b 100644
    string(STRIP "${ORT_GIT_BRANCH}" ORT_GIT_BRANCH)
    string(APPEND ORT_BUILD_INFO "git-branch=${ORT_GIT_BRANCH}, git-commit-id=${ORT_GIT_COMMIT}, ")
  endif()
-@@ -1832,20 +1832,16 @@ if (onnxruntime_ENABLE_EXTERNAL_CUSTOM_OP_SCHEMAS)
+@@ -1804,20 +1804,20 @@ if (onnxruntime_ENABLE_EXTERNAL_CUSTOM_OP_SCHEMAS)
    )
  endif()
  
@@ -35,6 +35,10 @@ index d234a27..0af2e3b 100644
 -  string(APPEND PROJECT_CONFIG_CONTENT
 -        "include(\"\${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}Targets.cmake\")")
 -  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/PROJECT_CONFIG_FILE" ${PROJECT_CONFIG_CONTENT})
++  # set(PROJECT_CONFIG_CONTENT "@PACKAGE_INIT@\n")
++  # string(APPEND PROJECT_CONFIG_CONTENT
++  #       "include(\"\${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}Targets.cmake\")")
++  # file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/PROJECT_CONFIG_FILE" ${PROJECT_CONFIG_CONTENT})
    install(EXPORT ${PROJECT_NAME}Targets
      NAMESPACE ${PROJECT_NAME}::
      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
@@ -46,10 +50,10 @@ index d234a27..0af2e3b 100644
  
    write_basic_package_version_file(
 diff --git a/cmake/onnxruntime_common.cmake b/cmake/onnxruntime_common.cmake
-index 896379d..aa9dfcf 100644
+index 69d8f5f..374e439 100644
 --- a/cmake/onnxruntime_common.cmake
 +++ b/cmake/onnxruntime_common.cmake
-@@ -218,7 +218,7 @@ endif()
+@@ -212,7 +212,7 @@ endif()
  
  if (NOT onnxruntime_BUILD_SHARED_LIB)
    install(DIRECTORY ${PROJECT_SOURCE_DIR}/../include/onnxruntime/core/common  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/onnxruntime/core)
@@ -75,7 +79,7 @@ index 3ab4c19..066fb56 100644
  endif()
 -
 diff --git a/cmake/onnxruntime_framework.cmake b/cmake/onnxruntime_framework.cmake
-index b85edbf..7956519 100644
+index c9bf2ac..3808f7d 100644
 --- a/cmake/onnxruntime_framework.cmake
 +++ b/cmake/onnxruntime_framework.cmake
 @@ -69,9 +69,9 @@ endif()
@@ -90,9 +94,9 @@ index b85edbf..7956519 100644
  endif()
  # Needed for the provider interface, as it includes training headers when training is enabled
  if (onnxruntime_ENABLE_TRAINING_OPS)
-@@ -127,7 +127,7 @@ if (onnxruntime_BUILD_SHARED_LIB)
-   install(FILES ${PROJECT_SOURCE_DIR}/../include/onnxruntime/core/framework/provider_options.h  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/onnxruntime/)
- else()
+@@ -125,7 +125,7 @@ endif()
+ 
+ if (NOT onnxruntime_BUILD_SHARED_LIB)
    install(DIRECTORY ${PROJECT_SOURCE_DIR}/../include/onnxruntime/core/framework  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/onnxruntime/core)
 -  install(TARGETS onnxruntime_framework
 +  install(TARGETS onnxruntime_framework EXPORT ${PROJECT_NAME}Targets
@@ -113,10 +117,10 @@ index 4d51325..fba1a68 100644
              LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
 diff --git a/cmake/onnxruntime_mlas.cmake b/cmake/onnxruntime_mlas.cmake
-index d888f80..851ff1e 100644
+index 682dcfc..ac6ce0e 100644
 --- a/cmake/onnxruntime_mlas.cmake
 +++ b/cmake/onnxruntime_mlas.cmake
-@@ -702,7 +702,7 @@ if (PLATFORM_NAME STREQUAL "macabi")
+@@ -651,7 +651,7 @@ if (PLATFORM_NAME STREQUAL "macabi")
  endif()
  
  if (NOT onnxruntime_BUILD_SHARED_LIB)
@@ -125,21 +129,8 @@ index d888f80..851ff1e 100644
              ARCHIVE   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
-diff --git a/cmake/onnxruntime_optimizer.cmake b/cmake/onnxruntime_optimizer.cmake
-index 3bae1b8..8764a8a 100644
---- a/cmake/onnxruntime_optimizer.cmake
-+++ b/cmake/onnxruntime_optimizer.cmake
-@@ -127,7 +127,7 @@ set_target_properties(onnxruntime_optimizer PROPERTIES FOLDER "ONNXRuntime")
- 
- if (NOT onnxruntime_BUILD_SHARED_LIB)
-   install(DIRECTORY ${PROJECT_SOURCE_DIR}/../include/onnxruntime/core/optimizer  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/onnxruntime/core)
--  install(TARGETS onnxruntime_optimizer
-+  install(TARGETS onnxruntime_optimizer EXPORT ${PROJECT_NAME}Targets
-             ARCHIVE   DESTINATION ${CMAKE_INSTALL_LIBDIR}
-             LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
-             RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
 diff --git a/cmake/onnxruntime_providers_cpu.cmake b/cmake/onnxruntime_providers_cpu.cmake
-index bbcc709..81e7a2b 100644
+index b211c02..f97b68b 100644
 --- a/cmake/onnxruntime_providers_cpu.cmake
 +++ b/cmake/onnxruntime_providers_cpu.cmake
 @@ -60,7 +60,7 @@ if(NOT onnxruntime_DISABLE_CONTRIB_OPS)
@@ -151,7 +142,7 @@ index bbcc709..81e7a2b 100644
      "${ONNXRUNTIME_ROOT}/contrib_ops/cpu/quantization/neural_speed_wrapper.h"
      "${ONNXRUNTIME_ROOT}/contrib_ops/cpu/quantization/neural_speed_defs.h"
      "${ONNXRUNTIME_ROOT}/contrib_ops/cpu/quantization/neural_speed_gemm.cc"
-@@ -258,7 +258,7 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
+@@ -260,7 +260,7 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
    message(FATAL_ERROR "onnxruntime_providers_shared unknown platform, need to specify shared library exports for it")
    endif()
  
@@ -160,7 +151,7 @@ index bbcc709..81e7a2b 100644
            ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
            LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
-@@ -266,7 +266,7 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
+@@ -268,7 +268,7 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
  endif()
  
  if (NOT onnxruntime_BUILD_SHARED_LIB)
@@ -205,10 +196,10 @@ index ae7e842..7274ea8 100644
              LIBRARY   DESTINATION ${CMAKE_INSTALL_LIBDIR}
              RUNTIME   DESTINATION ${CMAKE_INSTALL_BINDIR}
 diff --git a/cmake/CMakeLists.txt b/cmake/CMakeLists.txt
-index ba2f19b..5f730ec 100644
+index 3fa055f..02455b2 100644
 --- a/cmake/CMakeLists.txt
 +++ b/cmake/CMakeLists.txt
-@@ -1017,7 +1017,7 @@ function(onnxruntime_set_compile_flags target_name)
+@@ -988,7 +988,7 @@ function(onnxruntime_set_compile_flags target_name)
            endforeach()
          endif()
        endforeach()

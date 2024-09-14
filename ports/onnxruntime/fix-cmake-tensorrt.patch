@@ -1,5 +1,5 @@
 diff --git a/cmake/onnxruntime_providers_tensorrt.cmake b/cmake/onnxruntime_providers_tensorrt.cmake
-index e56de0c..0ab5e1e 100644
+index 1e8f388..bd2e664 100644
 --- a/cmake/onnxruntime_providers_tensorrt.cmake
 +++ b/cmake/onnxruntime_providers_tensorrt.cmake
 @@ -8,8 +8,13 @@
@@ -18,12 +18,14 @@ index e56de0c..0ab5e1e 100644
    set(OLD_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
    set(PROTOBUF_LIBRARY ${PROTOBUF_LIB})
    if (WIN32)
-@@ -30,7 +35,7 @@
+@@ -30,8 +35,8 @@
    # There is an issue when running "Debug build" TRT EP with "Release build" TRT builtin parser on Windows.
    # We enforce following workaround for now until the real fix.
    if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
 -    set(onnxruntime_USE_TENSORRT_BUILTIN_PARSER OFF)
+-    MESSAGE(STATUS "[Note] There is an issue when running \"Debug build\" TRT EP with \"Release build\" TRT built-in parser on Windows. This build will use tensorrt oss parser instead.")
 +    # set(onnxruntime_USE_TENSORRT_BUILTIN_PARSER OFF)
-     MESSAGE(STATUS "[Note] There is an issue when running \"Debug build\" TRT EP with \"Release build\" TRT built-in parser on Windows. This build will use tensorrt oss parser instead.")
++    # MESSAGE(STATUS "[Note] There is an issue when running \"Debug build\" TRT EP with \"Release build\" TRT built-in parser on Windows. This build will use tensorrt oss parser instead.")
    endif()
  
+   find_path(TENSORRT_INCLUDE_DIR NvInfer.h
