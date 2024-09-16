@@ -14,17 +14,9 @@ vcpkg_from_github(
         fix-clang-cl-simd-compile.patch
 )
 # copied from PR 21348 to reduce patch size
+# caution: https://github.com/microsoft/onnxruntime/blob/45737400a2f3015c11f005ed7603611eaed306a6/cmake/deps.txt#L20-L25
 file(COPY "${CMAKE_CURRENT_LIST_DIR}/onnxruntime_external_deps.cmake" DESTINATION "${SOURCE_PATH}/cmake/external")
 file(COPY "${CMAKE_CURRENT_LIST_DIR}/project-config-template.cmake" DESTINATION "${SOURCE_PATH}/cmake")
-
-# https://github.com/microsoft/onnxruntime/blob/26250ae74d2c9a3c6860625ba4a147ddfb936907/cmake/deps.txt#L20-L25
-vcpkg_from_gitlab(
-    GITLAB_URL https://gitlab.com
-    OUT_SOURCE_PATH EIGEN_SOURCE_PATH
-    REPO libeigen/eigen
-    REF e7248b26a1ed53fa030c5c459f7ea095dfd276ac
-    SHA512 2ede6fa56b8374cd5618a9cca9f3666909255277d0fe23eb54266972a9ab4e6c8c00abcb8fab918ea45b4aec37a3d316ca01107ff082dc9f19851df58d7ac80d
-)
 
 find_program(PROTOC NAMES protoc PATHS "${CURRENT_HOST_INSTALLED_DIR}/tools/protobuf" REQUIRED NO_DEFAULT_PATH NO_CMAKE_PATH)
 message(STATUS "Using protoc: ${PROTOC}")
@@ -92,10 +84,6 @@ vcpkg_cmake_configure(
         "-DONNX_CUSTOM_PROTOC_EXECUTABLE:FILEPATH=${PROTOC}"
         -DBUILD_PKGCONFIG_FILES=${BUILD_SHARED}
         -Donnxruntime_USE_VCPKG=ON
-        # the port doesn't use eigen3 in vcpkg
-        -DEigen3_FOUND=OFF # force include(eigen)
-        -Donnxruntime_USE_PREINSTALLED_EIGEN=ON
-        -Deigen_SOURCE_PATH=${EIGEN_SOURCE_PATH}
         -Donnxruntime_BUILD_SHARED_LIB=${BUILD_SHARED}
         -Donnxruntime_BUILD_WEBASSEMBLY=OFF
         -Donnxruntime_CROSS_COMPILING=${VCPKG_CROSSCOMPILING}
