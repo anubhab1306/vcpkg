@@ -9,6 +9,7 @@ vcpkg_from_github(
     REF ${ORT_BRANCH}
     SHA512 da0cd297ffc11e2f627a91e55476952b2511e36bf97fb0d9a0a8b1e2cbd12a451e1a8ead1581bfe03d08c97946f0938434edd4637cbeb28f7007533d4b37ee55
     PATCHES
+        revert-pr-21492.patch
         fix-pr-21348.patch # cmake, source changes of PR 21348
         fix-cmake.patch
         fix-cmake-cuda.patch
