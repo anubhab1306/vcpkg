@@ -1,5 +1,3 @@
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" BUILD_SHARED)
-
 set(ORT_COMMIT "26250ae74d2c9a3c6860625ba4a147ddfb936907")
 set(ORT_BRANCH "v${VERSION}")
 
@@ -7,7 +5,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO microsoft/onnxruntime
     REF ${ORT_BRANCH}
-    SHA512 da0cd297ffc11e2f627a91e55476952b2511e36bf97fb0d9a0a8b1e2cbd12a451e1a8ead1581bfe03d08c97946f0938434edd4637cbeb28f7007533d4b37ee55
+    SHA512 3bf25e431d175c61953d28b1bf8f6871376684263992451a5b2a66e670768fc66e7027f141c6e3f4d1eddeebeda51f31ea0adf4749e50d99ee89d0a26bec77ce
     PATCHES
         revert-pr-21492.patch
         fix-pr-21348.patch # cmake, source changes of PR 21348
@@ -71,11 +69,13 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
 )
 
 if("tensorrt" IN_LIST FEATURES)
-    if(DEFINED TENSORRT_ROOT)
+    if(DEFINED TENSORRT_ROOT) # if the variable in the triplet, use it
         message(STATUS "Using TensorRT: ${TENSORRT_ROOT}")
         list(APPEND FEATURE_OPTIONS "-Donnxruntime_TENSORRT_HOME:PATH=${TENSORRT_ROOT}")
     endif()
 endif()
+
+string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" BUILD_SHARED)
 
 # see tools/ci_build/build.py
 vcpkg_cmake_configure(
