@@ -32,7 +32,7 @@ if(CMAKE_HOST_WIN32)
     # https://docs.python.org/3/library/sys_path_init.html#pth-files
     string(REGEX MATCH "^3\\.[0-9]+" _python_version_plain "${program_version}")
     string(REPLACE "." "" _python_version_plain "${_python_version_plain}")
-    vcpkg_list(SET post_install_command "${CMAKE_COMMAND}" -E rm "python${_python_version_plain}._pth")
+    #vcpkg_list(SET post_install_command "${CMAKE_COMMAND}" -E rm "python${_python_version_plain}._pth")
 else()
     set(program_name python3)
     set(brew_package_name "python")
