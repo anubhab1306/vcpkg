@@ -9,6 +9,7 @@ vcpkg_from_github(
         fix-gdal-target-interfaces.patch
         libkml.patch
         target-is-valid.patch
+        fix-gdal-10727.diff
 )
 # `vcpkg clean` stumbles over one subdir
 file(REMOVE_RECURSE "${SOURCE_PATH}/autotest")
@@ -101,6 +102,7 @@ vcpkg_cmake_configure(
     OPTIONS_DEBUG
         -DBUILD_APPS=OFF
     MAYBE_UNUSED_VARIABLES
+        MYSQL_LIBRARIES
         QHULL_LIBRARY
 )
 vcpkg_cmake_install()
