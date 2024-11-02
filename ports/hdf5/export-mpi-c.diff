@@ -1,0 +1,12 @@
+diff --git a/config/cmake/hdf5-config.cmake.in b/config/cmake/hdf5-config.cmake.in
+index ad1c30b..00fef97 100644
+--- a/config/cmake/hdf5-config.cmake.in
++++ b/config/cmake/hdf5-config.cmake.in
+@@ -86,6 +86,7 @@ if (${HDF5_PACKAGE_NAME}_ENABLE_PARALLEL)
+   set (${HDF5_PACKAGE_NAME}_PARALLEL_FILTERED_WRITES @PARALLEL_FILTERED_WRITES@)
+   set (${HDF5_PACKAGE_NAME}_LARGE_PARALLEL_IO        @LARGE_PARALLEL_IO@)
+ 
++  enable_language(C) # for MPI::MPI_C
+   find_package(MPI QUIET REQUIRED)
+ endif ()
+ 
