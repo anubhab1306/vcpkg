@@ -9,20 +9,18 @@ vcpkg_from_github(
     HEAD_REF master
     PATCHES
         cmake-fixes.patch
-        #more-fixes.patch
-        #fix-build.patch
-        #clang-cl.patch
-        #cuda-adjustments.patch
+        more-fixes.patch
+        fix-build.patch
+        clang-cl.patch
+        cuda-adjustments.patch
         fix-api-export.patch
         fxdiv.patch
-        #protoc.patch
-        #fix-sleef.patch
+        protoc.patch
+        fix-sleef.patch
         fix-glog.patch
-        #fix-msvc-ICE.patch
         fix-calculate-minloglevel.patch
-        #force-cuda-include.patch
-        #fix-aten-cutlass.patch
-        #fix-build-error-with-fmt11.patch
+        force-cuda-include.patch
+        fix-aten-cutlass.patch
 )
 
 file(REMOVE_RECURSE "${SOURCE_PATH}/caffe2/core/macros.h") # We must use generated header files
@@ -30,8 +28,8 @@ file(REMOVE_RECURSE "${SOURCE_PATH}/caffe2/core/macros.h") # We must use generat
 vcpkg_from_github(
     OUT_SOURCE_PATH src_kineto
     REPO pytorch/kineto
-    REF 49e854d805d916b2031e337763928d2f8d2e1fbf
-    SHA512 ae63d48dc5b8ac30c38c2ace60f16834c7e9275fa342dc9f109d4fbc87b7bd674664f6413c36d0c1ab5a7da786030a4108d83daa4502b2f30239283ea3acdb16
+    REF d9753139d181b9ff42872465aac0e5d3018be415
+    SHA512 f037fac78e566c40108acf9eace55a8f67a2c5b71f298fd3cd17bf22cf05240c260fd89f017fa411656a7505ec9073a06a3048e191251d5cfc4b52c237b37d0b
     HEAD_REF main
     PATCHES
       kineto.patch
@@ -70,7 +68,8 @@ message(STATUS "Using protoc: ${PROTOC}")
 
 x_vcpkg_get_python_packages(
     PYTHON_VERSION 3
-    PACKAGES typing-extensions pyyaml numpy
+    PACKAGES typing-extensions pyyaml 
+    # numpy
     OUT_PYTHON_VAR PYTHON3
 )
 #set(PYTHON3 "${CURRENT_HOST_INSTALLED_DIR}/tools/python3/python${VCPKG_HOST_EXECUTABLE_SUFFIX}")
