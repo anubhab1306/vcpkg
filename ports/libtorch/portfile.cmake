@@ -1,6 +1,4 @@
 
-#vcpkg_check_linkage(ONLY_DYNAMIC_LIBRARY)
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO pytorch/pytorch
@@ -191,7 +189,7 @@ vcpkg_cmake_configure(
         USE_NUMA
         USE_SYSTEM_BIND11
         MKLDNN_CPU_RUNTIME
-        PYTHON_LIBRARY # Causes BUILD_SHARED_LIBS to be overriden
+        PYTHON_LIBRARY
 )
 
 vcpkg_cmake_install()
@@ -199,12 +197,6 @@ vcpkg_copy_pdbs()
 
 vcpkg_cmake_config_fixup(PACKAGE_NAME torch CONFIG_PATH "share/cmake/Torch")
 vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/torch/TorchConfig.cmake" "/../../../" "/../../")
-vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/caffe2/Caffe2Config.cmake" "/../../../" "/../../")
-vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/caffe2/Caffe2Config.cmake"
-  "set(Caffe2_MAIN_LIBS torch_library)"
-  "set(Caffe2_MAIN_LIBS torch_library)\nfind_dependency(Eigen3)")
-
-
 
 # Traverse the folder and remove "some" empty folders
 function(cleanup_once folder)
