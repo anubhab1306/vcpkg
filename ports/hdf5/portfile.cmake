@@ -10,7 +10,8 @@ vcpkg_from_github(
     PATCHES
         hdf5_config.patch
         szip.patch
-	add-_Float16-type-on-aarch64.patch
+        add-_Float16-type-on-aarch64.patch
+        export-mpi-c.diff
 )
 
 set(ALLOW_UNSUPPORTED OFF)
@@ -106,7 +107,7 @@ set(HDF5_TOOLS "")
 if("tools" IN_LIST FEATURES)
     list(APPEND HDF5_TOOLS h5copy h5diff h5dump h5ls h5stat gif2h5 h52gif h5clear h5debug
         h5format_convert h5jam h5unjam h5mkgrp h5repack h5repart h5watch h5import h5delete
-	h5perf_serial
+        h5perf_serial
     )
 
     if("parallel" IN_LIST FEATURES)

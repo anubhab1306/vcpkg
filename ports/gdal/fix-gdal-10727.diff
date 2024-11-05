@@ -1,0 +1,48 @@
+diff --git a/cmake/helpers/GdalGenerateConfig.cmake b/cmake/helpers/GdalGenerateConfig.cmake
+index a2e9dfc..f6acd2c 100644
+--- a/cmake/helpers/GdalGenerateConfig.cmake
++++ b/cmake/helpers/GdalGenerateConfig.cmake
+@@ -181,7 +181,8 @@ function(gdal_split_library_to_lflags _lib_flag _path_flag _input)
+             # Match
+             string(LENGTH "${_prefix}" _pos)
+             string(SUBSTRING "${_name_we}" "${_pos}" "-1" _lib_name)
+-            set(${_lib_flag} "${CMAKE_LINK_LIBRARY_FLAG}${_lib_name}" PARENT_SCOPE)
++            gdal_get_link_lib_spec(_lib_spec "${_lib_name}")
++            set(${_lib_flag} "${_lib_spec}" PARENT_SCOPE)
+             if(_lib_dir AND NOT _lib_dir IN_LIST CMAKE_C_IMPLICIT_LINK_DIRECTORIES)
+                 set(${_path_flag} "${CMAKE_LIBRARY_PATH_FLAG}${_lib_dir}" PARENT_SCOPE)
+             else()
+@@ -232,7 +233,7 @@ function(gdal_get_lflags _result)
+                 gdal_split_library_to_lflags(_lib _other "${_lib}")
+             endif()
+         else()
+-            set(_lib "${CMAKE_LINK_LIBRARY_FLAG}${_lib}")
++            gdal_get_link_lib_spec(_lib "${_lib}")
+         endif()
+         if(_other AND NOT _other IN_LIST _libs_out)
+             list(APPEND _libs_out "${_other}")
+@@ -245,6 +246,15 @@ function(gdal_get_lflags _result)
+     set(${_result} "${_libs_out}" PARENT_SCOPE)
+ endfunction()
+ 
++function(gdal_get_link_lib_spec _result _lib)
++    if("${CMAKE_LINK_LIBRARY_FLAG}" STREQUAL "")
++        # For MSVC
++        set("${_result}" "${_lib}${CMAKE_LINK_LIBRARY_SUFFIX}" PARENT_SCOPE)
++    else()
++        set("${_result}" "${CMAKE_LINK_LIBRARY_FLAG}${_lib}" PARENT_SCOPE)
++    endif()
++endfunction()
++
+ # Generate gdal-config utility command and pkg-config module gdal.pc
+ function(gdal_generate_config)
+     set(one_value_keywords "TARGET;GLOBAL_PROPERTY;GDAL_CONFIG;PKG_CONFIG")
+@@ -270,7 +280,7 @@ function(gdal_generate_config)
+     gdal_join_and_quote(CONFIG_CFLAGS)
+ 
+     get_property(target_lib_name TARGET "${arg_TARGET}" PROPERTY OUTPUT_NAME)
+-    set(CONFIG_LIBS "${CMAKE_LINK_LIBRARY_FLAG}${target_lib_name}")
++    gdal_get_link_lib_spec(CONFIG_LIBS "${target_lib_name}")
+     if(NOT CONFIG_PREFIX IN_LIST CMAKE_C_IMPLICIT_LINK_LIBRARIES)
+         list(INSERT CONFIG_LIBS 0 "${CMAKE_LIBRARY_PATH_FLAG}${CMAKE_INSTALL_FULL_LIBDIR}")
+     endif()
