@@ -1,7 +1,6 @@
 {
   "name": "libtorch",
-  "version": "2.1.2",
-  "port-version": 7,
+  "version": "2.5.1",
   "description": "Tensors and Dynamic neural networks in Python with strong GPU acceleration",
   "homepage": "https://pytorch.org/",
   "license": null,
@@ -26,6 +25,7 @@
     "lapack",
     "lmdb",
     "mimalloc",
+    "nlohmann-json",
     "onnx",
     "onnx-optimizer",
     "opencl",
