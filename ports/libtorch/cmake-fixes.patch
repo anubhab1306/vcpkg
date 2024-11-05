@@ -12,19 +12,6 @@ index 3a48eaf..7b8bc7c 100644
  endif()
  
  # ---[ Main build
-diff --git a/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt b/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt
-index fd6b7ff..d185233 100644
---- a/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt
-+++ b/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt
-@@ -368,7 +368,7 @@
-   if(NOT PTHREADPOOL_LIBRARY)
-     message(FATAL_ERROR "Cannot find pthreadpool")
-   endif()
--  message("-- Found pthreadpool: ${PTHREADPOOL_LIBRARY}")
-+  message("-- Found pthreadpool cpu qnnpack: ${PTHREADPOOL_LIBRARY}")
-   set_target_properties(pthreadpool PROPERTIES
-     IMPORTED_LOCATION "${PTHREADPOOL_LIBRARY}")
-   add_library(pthreadpool_interface INTERFACE)
 diff --git a/c10/CMakeLists.txt b/c10/CMakeLists.txt
 index feebad7..ad407e1 100644
 --- a/c10/CMakeLists.txt

@@ -102,7 +102,6 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     mpi     USE_MPI
     nnpack  USE_NNPACK  # todo: check use of `DISABLE_NNPACK_AND_FAMILY`
     nnpack  AT_NNPACK_ENABLED
-    qnnpack USE_QNNPACK # todo: check use of `USE_PYTORCH_QNNPACK`
 #   No feature in vcpkg yet so disabled. -> Requires numpy build by vcpkg itself
     python  BUILD_PYTHON
     python  USE_NUMPY
@@ -153,7 +152,6 @@ vcpkg_cmake_configure(
         -DUSE_ITT=OFF
         -DUSE_ROCKSDB=ON
         -DUSE_OBSERVERS=OFF
-        -DUSE_PYTORCH_QNNPACK=OFF
         -DUSE_KINETO=OFF
         -DUSE_ROCM=OFF
         -DUSE_NUMA=OFF

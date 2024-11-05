@@ -11,10 +11,12 @@ vcpkg_from_github(
     PATCHES
         fix-build.patch
 )
+vcpkg_find_acquire_program(PYTHON3)
 
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
+        "-DPython3_EXECUTABLE=${PYTHON3}"
         -DXNNPACK_USE_SYSTEM_LIBS=ON
         -DXNNPACK_ENABLE_ASSEMBLY=ON
         -DXNNPACK_ENABLE_MEMOPT=ON
