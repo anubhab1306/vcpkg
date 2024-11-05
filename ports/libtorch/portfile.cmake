@@ -1,5 +1,5 @@
 
-vcpkg_check_linkage(ONLY_DYNAMIC_LIBRARY)
+#vcpkg_check_linkage(ONLY_DYNAMIC_LIBRARY)
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
@@ -143,7 +143,6 @@ vcpkg_cmake_configure(
         -DCAFFE2_STATIC_LINK_CUDA=ON
         -DCAFFE2_USE_MSVC_STATIC_RUNTIME=${USE_STATIC_RUNTIME}
         -DBUILD_CUSTOM_PROTOBUF=OFF
-        -DBUILD_SHARED_LIBS=OFF
         -DUSE_LITE_PROTO=OFF
         -DBUILD_TEST=OFF
         -DATEN_NO_TEST=ON
@@ -192,13 +191,12 @@ vcpkg_cmake_configure(
         USE_NUMA
         USE_SYSTEM_BIND11
         MKLDNN_CPU_RUNTIME
-       # PYTHON_LIBRARY # Causes BUILD_SHARED_LIBS to be overriden
+        PYTHON_LIBRARY # Causes BUILD_SHARED_LIBS to be overriden
 )
 
 vcpkg_cmake_install()
 vcpkg_copy_pdbs()
 
-vcpkg_cmake_config_fixup(PACKAGE_NAME caffe2 CONFIG_PATH "share/cmake/Caffe2" DO_NOT_DELETE_PARENT_CONFIG_PATH)
 vcpkg_cmake_config_fixup(PACKAGE_NAME torch CONFIG_PATH "share/cmake/Torch")
 vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/torch/TorchConfig.cmake" "/../../../" "/../../")
 vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/caffe2/Caffe2Config.cmake" "/../../../" "/../../")
