@@ -1,7 +1,7 @@
 cmake_policy(PUSH)
 cmake_policy(SET CMP0057 NEW) # Support new IN_LIST if() operator
 
-if(NOT "CONFIG" IN_LIST ARGS)
+if("MODULE" IN_LIST ARGS)
     _find_package(${ARGS})
     cmake_policy(POP)
     return()
