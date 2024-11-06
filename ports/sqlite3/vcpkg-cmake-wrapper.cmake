@@ -1,3 +1,6 @@
+cmake_policy(PUSH)
+cmake_policy(SET CMP0057 NEW) # Support new IN_LIST if() operator
+
 if("REQUIRED" IN_LIST ARGS)
     set(REQUIRES "REQUIRED")
 else()
@@ -10,7 +13,6 @@ if(NOT TARGET unofficial::sqlite3::sqlite3)
     set(SQLite3_FOUND FALSE)
 else()
     # Refer to https://gitlab.kitware.com/cmake/cmake/-/blob/v3.30.0/Modules/FindSQLite3.cmake.
-    cmake_policy(PUSH)
     if(POLICY CMP0159)
         cmake_policy(SET CMP0159 NEW) # file(STRINGS) with REGEX updates CMAKE_MATCH_<n>
     endif()
@@ -37,6 +39,6 @@ else()
     if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
         add_library(SQLite::SQLite3 ALIAS unofficial::sqlite3::sqlite3)
     endif()
-
-    cmake_policy(POP)
 endif()
+
+cmake_policy(POP)
