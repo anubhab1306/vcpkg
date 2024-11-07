@@ -42,7 +42,7 @@ else()
         unset(_ver_line)
     endif()
 
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
+    if(NOT TARGET SQLite::SQLite3 AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
         add_library(SQLite::SQLite3 ALIAS unofficial::sqlite3::sqlite3)
     endif()
 endif()
