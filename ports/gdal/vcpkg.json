@@ -42,15 +42,6 @@
     "default-features"
   ],
   "features": {
-    "archive": {
-      "description": "Enable libarchive support",
-      "dependencies": [
-        {
-          "name": "libarchive",
-          "default-features": false
-        }
-      ]
-    },
     "aws-ec2-windows": {
       "description": "Optimized detection of AWS EC2 Windows hosts",
       "dependencies": [
