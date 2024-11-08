@@ -19,16 +19,9 @@ else()
     set(SQLite3_LIBRARIES unofficial::sqlite3::sqlite3)
     set(SQLite3_VERSION ${unofficial-sqlite3_VERSION})
 
-    # CMake official target
     if(NOT TARGET SQLite::SQLite3)
         add_library(SQLite::SQLite3 INTERFACE IMPORTED)
         set_target_properties(SQLite::SQLite3 PROPERTIES INTERFACE_LINK_LIBRARIES unofficial::sqlite3::sqlite3)
-    endif()
-
-    # gz-cmake FindSQLite3
-    if(NOT TARGET SQLite3::SQLite3)
-        add_library(SQLite3::SQLite3 INTERFACE IMPORTED)
-        set_target_properties(SQLite3::SQLite3 PROPERTIES INTERFACE_LINK_LIBRARIES unofficial::sqlite3::sqlite3)
     endif()
 endif()
 
