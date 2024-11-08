@@ -5,7 +5,6 @@ vcpkg_from_github(
     SHA512 fccdcf484bdc833dc5f0d6ad1fce9d152fa8b861cf23b634400d8bf7fd97d2c33a6b87050538c5a6c896d4ba870469134521cc44fdad3e071adffbf29329cb9b
     HEAD_REF master
     PATCHES
-        explicitly-find-sqlite3-module.patch
         find-link-libraries.patch
         fix-gdal-target-interfaces.patch
         libkml.patch
