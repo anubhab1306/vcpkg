@@ -8,7 +8,6 @@
     {
       "name": "gdal",
       "features": [
-        "archive",
         "freexl"
       ]
     },

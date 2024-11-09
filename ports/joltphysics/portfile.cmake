@@ -10,12 +10,6 @@ vcpkg_from_github(
 
 string(COMPARE EQUAL "${VCPKG_CRT_LINKAGE}" "static" USE_STATIC_CRT)
 
-vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
-    FEATURES
-        debugrenderer       DEBUG_RENDERER_IN_DEBUG_AND_RELEASE
-        profiler            PROFILER_IN_DEBUG_AND_RELEASE
-)
-
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}/Build"
     OPTIONS
@@ -29,7 +23,8 @@ vcpkg_cmake_configure(
         -DUSE_STATIC_MSVC_RUNTIME_LIBRARY=${USE_STATIC_CRT}
         -DENABLE_ALL_WARNINGS=OFF
         -DOVERRIDE_CXX_FLAGS=OFF
-        ${FEATURE_OPTIONS}
+        -DDEBUG_RENDERER_IN_DEBUG_AND_RELEASE=OFF
+        -DPROFILER_IN_DEBUG_AND_RELEASE=OFF
     OPTIONS_RELEASE
         -DGENERATE_DEBUG_SYMBOLS=OFF
 )
