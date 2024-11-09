@@ -120,6 +120,25 @@ if ($IsWindows) {
     rmdir empty
 }
 
+if ($IsLinux -and $Triplet -match 'android' -and $true)
+{
+    $override_ndk = 'r29-canary'
+    $override_ndk_url = 'https://androidbuildinternal.googleapis.com/android/internal/build/v3/builds/12591196/linux/attempts/latest/artifacts/android-ndk-12591196-linux-x86_64.zip/url'
+    $override_ndk_sha512 = '911e1e4522535e7ef7125966830ef5cfdf323384900424966855f5c75587823eb167862484ea5b6ac426b23423dc796ad533ae1f93e65540f3415225641b5b7a'
+    Write-Host "Downloading Android NDK $override_ndk"
+    & "./vcpkg" x-download android-ndk-$override_ndk-linux.zip "--sha512=$override_ndk_sha512" "--url=$override_ndk_url" @cachingArgs
+    Write-Host "Unpacking"
+    & unzip -q android-ndk-$override_ndk-linux.zip
+    $env:ANDROID_NDK_HOME = Join-Path $Pwd "android-ndk-$override_ndk"
+    $NoParentHashes = $true
+
+    # https://android-review.googlesource.com/c/platform/bionic/+/3343442/1/libc/include/ctype.h
+    $ndk_ctype_path = "$env:ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/ctype.h"
+    $ndk_ctype = Get-Content $ndk_ctype_path -Raw
+    $ndk_ctype = $ndk_ctype.Replace('static inline int __bionic_ctype_in_range', '__BIONIC_CTYPE_INLINE int __bionic_ctype_in_range')
+    Set-Content -Path $ndk_ctype_path -Value $ndk_ctype
+}
+
 & "./vcpkg$executableExtension" x-ci-clean @commonArgs
 $lastLastExitCode = $LASTEXITCODE
 if ($lastLastExitCode -ne 0)
