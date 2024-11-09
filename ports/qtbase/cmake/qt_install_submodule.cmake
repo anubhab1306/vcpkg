@@ -9,16 +9,13 @@ if(NOT DEFINED QT6_DIRECTORY_PREFIX)
 endif()
 
 if(VCPKG_TARGET_IS_ANDROID)
+    # ANDROID_HOME: canonical SDK environment variable
+    # ANDROID_SDK_ROOT: legacy qtbase triplet variable
     if(NOT ANDROID_SDK_ROOT)
-        if($ENV{ANDROID_HOME})
-            set(ANDROID_SDK_ROOT "$ENV{ANDROID_HOME}")
+        if("$ENV{ANDROID_HOME}" STREQUAL "")
+            message(FATAL_ERROR "${PORT} requires environment variable ANDROID_HOME to be set.")
         endif()
-        if(NOT ANDROID_SDK_ROOT)
-            message(FATAL_ERROR "${PORT} requires ANDROID_SDK_ROOT to be set. Set ANDROID_HOME as environment variable or ANDROID_SDK_ROOT in the triplet.")
-        endif()
-    endif()
-    if(NOT IS_DIRECTORY ${ANDROID_SDK_ROOT})
-        message(FATAL_ERROR "ANDROID_SDK_ROOT (or ENV{ANDROID_HOME}) is set to `${ANDROID_SDK_ROOT}` which is not a directory.")
+        set(ANDROID_SDK_ROOT "$ENV{ANDROID_HOME}")
     endif()
 endif()
 
