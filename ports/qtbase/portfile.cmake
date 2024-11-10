@@ -328,11 +328,13 @@ qt_install_submodule(PATCHES    ${${PORT}_PATCHES}
                         -DINPUT_bundled_xcb_xinput:STRING=no
                         -DFEATURE_force_debug_info:BOOL=ON
                         -DFEATURE_relocatable:BOOL=ON
+                        -DQT_AUTODETECT_ANDROID:BOOL=ON # Use vcpkg toolchain as is
                      CONFIGURE_OPTIONS_RELEASE
                      CONFIGURE_OPTIONS_DEBUG
                         -DFEATURE_debug:BOOL=ON
                      CONFIGURE_OPTIONS_MAYBE_UNUSED
                         FEATURE_appstore_compliant # only used for android/ios
+                        QT_AUTODETECT_ANDROID
                     )
 
 # Install CMake helper scripts
@@ -483,13 +485,6 @@ if(EXISTS "${target_qt_conf}")
       configure_file("${CURRENT_PACKAGES_DIR}/tools/Qt6/bin/qmake${script_suffix}" "${CURRENT_PACKAGES_DIR}/tools/Qt6/bin/qmake.debug${script_suffix}" COPYONLY)
       vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/tools/Qt6/bin/qmake.debug${script_suffix}" "target_qt.conf" "target_qt_debug.conf")
     endif()
-endif()
-
-if(VCPKG_TARGET_IS_ANDROID)
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/Qt6/QtPlatformAndroid.cmake"
-        [[message(FATAL_ERROR "The Qt libraries on Android only supports the shared library configuration of stl. Please use -DANDROID_STL=\"c++_shared\" as configuration argument.")]]
-        [[message(WARNING "This vcpkg triplet uses ANDROID_STL=\"${ANDROID_STL}\". This configuration is not supported by Qt.")]]
-    )
 endif()
 
 if(VCPKG_TARGET_IS_EMSCRIPTEN)

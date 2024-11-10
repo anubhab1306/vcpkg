@@ -342,6 +342,12 @@ function(qt_install_submodule)
 
     qt_download_submodule(PATCHES ${_qis_PATCHES})
 
+    if(VCPKG_TARGET_IS_ANDROID)
+        # Qt requires libc++_shared, cf. <qtbase>/cmake/QtPlatformAndroid.cmake
+        # and https://developer.android.com/ndk/guides/cpp-support#sr
+        vcpkg_check_linkage(ONLY_DYNAMIC_CRT)
+    endif()
+
     if(_qis_DISABLE_NINJA)
         set(_opt DISABLE_NINJA)
     endif()

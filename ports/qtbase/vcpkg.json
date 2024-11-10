@@ -312,6 +312,16 @@
           "name": "qtbase",
           "default-features": false,
           "features": [
+            "egl",
+            "gles2",
+            "opengl"
+          ],
+          "platform": "android"
+        },
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
             "thread"
           ],
           "platform": "windows"
