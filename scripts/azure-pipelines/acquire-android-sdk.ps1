@@ -1,12 +1,16 @@
-$JDKVersion = '17.0.2'
+$JDKVersion = '11.0.25+9'
 $ToolsVersion = '10406996_latest'
 
 Write-Host "Downloading the JDK"
-& "./vcpkg" x-download openjdk-$JDKVersion.tar.gz "--sha512=0bf168239a9a1738ad6368b8f931d072aeb122863ec39ea86dc0449837f06953ce18be87bab7e20fd2585299a680ea844ec419fa235da87dfdd7e37b73740a57" "--url=https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-${JDKVersion}_linux-x64_bin.tar.gz" @cachingArgs
+# OpenLogic provides OpenJDK builds under liberal terms 💚
+# https://www.openlogic.com/openjdk-downloads
+$JDKFile = "openlogic-openjdk-$JDKVersion-linux-x64.tar.gz"
+$JDKUrl = "https://builds.openlogic.com/downloadJDK/openlogic-openjdk/$JDKVersion/$JDKFile"
+& "./vcpkg" x-download $JDKFile "--sha512=e4991553adb987003f8fa61e7b6126bd6af2da5a379c7aa67473a1c5df2d9d9809518e29e9a1ce2ea7cf7d7376fb9b17e2a7ef935973a073429cb43b709a6d0c" "--url=$JDKUrl" @cachingArgs
 
+$env:JAVA_HOME = Join-Path $Pwd "openlogic-openjdk-$JDKVersion-linux-x64"
 Write-Host "Setting up the JDK in $env:JAVA_HOME"
-$env:JAVA_HOME = Join-Path $Pwd "jdk-$JDKVersion"
-& tar -xvf openjdk-$JDKVersion.tar.gz
+& tar -xvf $JDKFile
 
 Write-Host "Downloading the Android SDK"
 & "./vcpkg" x-download sdk-commandlinetools-linux-$ToolsVersion.zip "--sha512=64b7d18ee7adeb1204eaa2978091e874dc9af9604796b64e1a185a11c15325657383fc9900e55e4590c8b8a2784b3881745d2f32daef1207e746c0ee41c2b72b" "--url=https://dl.google.com/android/repository/commandlinetools-linux-${ToolsVersion}.zip"

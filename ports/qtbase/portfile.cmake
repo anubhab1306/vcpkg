@@ -485,10 +485,16 @@ if(EXISTS "${target_qt_conf}")
     endif()
 endif()
 
+if(VCPKG_TARGET_IS_ANDROID)
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/Qt6/QtPlatformAndroid.cmake"
+        [[message(FATAL_ERROR "The Qt libraries on Android only supports the shared library configuration of stl. Please use -DANDROID_STL=\"c++_shared\" as configuration argument.")]]
+        [[message(WARNING "This vcpkg triplet uses ANDROID_STL=\"${ANDROID_STL}\". This configuration is not supported by Qt.")]]
+    )
+endif()
+
 if(VCPKG_TARGET_IS_EMSCRIPTEN)
   vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/Qt6Core/Qt6WasmMacros.cmake" "_qt_test_emscripten_version()" "") # this is missing a include(QtPublicWasmToolchainHelpers)
 endif()
-
 
 if(VCPKG_TARGET_IS_WINDOWS)
     set(_DLL_FILES brotlicommon brotlidec bz2 freetype harfbuzz libpng16)
