@@ -92,6 +92,9 @@ qt_install_submodule(PATCHES    ${${PORT}_PATCHES}
                            -DCMAKE_REQUIRE_FIND_PACKAGE_litehtml:BOOL=ON
                      CONFIGURE_OPTIONS_RELEASE
                      CONFIGURE_OPTIONS_DEBUG
+                     CONFIGURE_OPTIONS_MAYBE_UNUSED
+                         CMAKE_REQUIRE_FIND_PACKAGE_litehtml
+                         QLITEHTML_USE_SYSTEM_LITEHTML
                     )
 
 if(VCPKG_TARGET_IS_OSX)

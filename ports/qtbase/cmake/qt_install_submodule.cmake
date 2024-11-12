@@ -343,9 +343,11 @@ function(qt_install_submodule)
     qt_download_submodule(PATCHES ${_qis_PATCHES})
 
     if(VCPKG_TARGET_IS_ANDROID)
-        # Qt requires libc++_shared, cf. <qtbase>/cmake/QtPlatformAndroid.cmake
+        # Qt only supports dynamic linkage on Android,
+        # https://bugreports.qt.io/browse/QTBUG-32618.
+        # It requires libc++_shared, cf. <qtbase>/cmake/QtPlatformAndroid.cmake
         # and https://developer.android.com/ndk/guides/cpp-support#sr
-        vcpkg_check_linkage(ONLY_DYNAMIC_CRT)
+        vcpkg_check_linkage(ONLY_DYNAMIC_LIBRARY)
     endif()
 
     if(_qis_DISABLE_NINJA)
