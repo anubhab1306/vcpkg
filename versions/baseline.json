@@ -9961,7 +9961,7 @@
       "port-version": 0
     },
     "zoe": {
-      "baseline": "3.3",
+      "baseline": "3.5",
       "port-version": 0
     },
     "zookeeper": {
